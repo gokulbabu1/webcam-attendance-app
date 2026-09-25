@@ -1,0 +1,292 @@
+/* ============================================================
+   components.css — Tables, forms, modals, pagination
+   ============================================================ */
+
+/* ── Card Toolbar (search + filters bar) ─────────────────── */
+.card-toolbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 7px 12px;
+  flex: 1; min-width: 180px;
+  transition: border-color var(--transition);
+}
+.search-box:focus-within { border-color: var(--primary); }
+.search-box .material-icons { font-size: 17px; color: var(--text-muted); }
+.search-box input {
+  background: none; border: none; outline: none;
+  color: var(--text-primary); font-size: 13px;
+  width: 100%;
+}
+.search-box input::placeholder { color: var(--text-muted); }
+
+.filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-group select {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 7px 10px;
+  font-size: 12px; cursor: pointer;
+  transition: border-color var(--transition);
+  outline: none;
+}
+.filter-group select:focus { border-color: var(--primary); }
+.filter-group select option { background: var(--bg-elevated); }
+
+.record-count {
+  font-size: 12px; color: var(--text-muted);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* ── Data Table ──────────────────────────────────────────── */
+.table-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table thead tr {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+.data-table th {
+  padding: 11px 14px;
+  text-align: left;
+  font-size: 11px; font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .07em;
+  white-space: nowrap;
+  user-select: none;
+}
+.data-table td {
+  padding: 11px 14px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.data-table tbody tr {
+  transition: background var(--transition);
+}
+.data-table tbody tr:hover { background: var(--bg-hover); }
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+.empty-row {
+  text-align: center !important;
+  color: var(--text-muted) !important;
+  padding: 40px !important;
+  font-style: italic;
+}
+
+/* User cell avatar */
+.user-cell {
+  display: flex; align-items: center; gap: 8px;
+}
+.avatar {
+  width: 28px; height: 28px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+
+/* ── Table Footer / Pagination ───────────────────────────── */
+.table-footer {
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+.pagination { display: flex; gap: 4px; align-items: center; }
+.page-btn {
+  width: 30px; height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); cursor: pointer;
+}
+.page-btn:hover:not(:disabled) { background: var(--primary-glow); color: var(--primary); border-color: var(--primary); }
+.page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.page-btn:disabled { opacity: .4; cursor: not-allowed; }
+.page-btn .material-icons { font-size: 16px; }
+
+/* ── Forms ───────────────────────────────────────────────── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 18px;
+}
+.form-full { grid-column: 1 / -1; }
+.form-section-title {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin: 18px 0 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 6px;
+}
+.form-section-title:first-of-type { margin-top: 0; }
+
+.form-group {
+  display: flex; flex-direction: column; gap: 5px;
+}
+.form-group label {
+  font-size: 12px; font-weight: 600;
+  color: var(--text-secondary);
+}
+.req { color: var(--danger); }
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 9px 12px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+.form-group input::placeholder { color: var(--text-muted); }
+.form-group select option { background: var(--bg-elevated); }
+
+.input-icon-wrap {
+  position: relative; display: flex; align-items: center;
+}
+.input-icon-wrap input {
+  padding-left: 36px !important;
+  padding-right: 36px !important;
+  width: 100%;
+}
+.input-icon {
+  position: absolute; left: 10px;
+  font-size: 17px !important; color: var(--text-muted);
+  pointer-events: none; z-index: 1;
+}
+.toggle-pwd {
+  position: absolute; right: 8px;
+  background: none; border: none;
+  color: var(--text-muted);
+  display: flex; align-items: center;
+  transition: color var(--transition);
+  padding: 0;
+}
+.toggle-pwd:hover { color: var(--text-primary); }
+.toggle-pwd .material-icons { font-size: 18px; }
+
+.field-error { font-size: 11px; color: var(--danger); min-height: 14px; }
+
+/* ── Password Strength ───────────────────────────────────── */
+.strength-meter { margin-top: 6px; }
+.strength-bar {
+  height: 4px; background: var(--border);
+  border-radius: var(--radius-full); overflow: hidden;
+  margin-bottom: 4px;
+}
+.strength-bar div {
+  height: 100%; border-radius: var(--radius-full);
+  transition: width .3s, background .3s;
+}
+.very-weak  { background: var(--danger); }
+.weak       { background: var(--orange); }
+.fair       { background: var(--warning); }
+.strong     { background: #84cc16; }
+.very-strong{ background: var(--success); }
+.strength-meter small { font-size: 11px; color: var(--text-muted); }
+
+/* ── Modal ───────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  width: 100%; max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  transform: scale(.92) translateY(20px);
+  opacity: 0;
+  transition: transform var(--transition-slow), opacity var(--transition-slow);
+}
+.modal.modal-in { transform: scale(1) translateY(0); opacity: 1; }
+.modal.modal-lg { max-width: 700px; }
+.modal.modal-sm { max-width: 400px; }
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg-surface);
+  z-index: 1;
+}
+.modal-header h2 { font-size: 16px; font-weight: 700; }
+.modal-header.danger { border-bottom-color: var(--danger); }
+.modal-header.danger h2 { color: var(--danger); }
+.modal-close {
+  width: 30px; height: 30px; border-radius: var(--radius-sm);
+  background: none; border: none; color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition), color var(--transition);
+}
+.modal-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+.modal-close .material-icons { font-size: 18px; }
+
+.modal-body { padding: 20px; }
+
+.modal-actions {
+  display: flex; gap: 10px; justify-content: flex-end;
+  margin-top: 20px; padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ── Confirm Dialog ──────────────────────────────────────── */
+.confirm-icon {
+  text-align: center; margin: 8px 0 16px;
+}
+.confirm-icon .material-icons {
+  font-size: 48px; color: var(--danger);
+  animation: pop .35s cubic-bezier(.34,1.56,.64,1);
+}
+.confirm-msg {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+.confirm-msg strong { color: var(--text-primary); }
+
+/* ── Responsive Forms ────────────────────────────────────── */
+@media (max-width: 540px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .modal { max-width: 100%; border-radius: var(--radius-lg); }
+}
