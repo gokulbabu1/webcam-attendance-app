@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Webcam — A professional enterprise business management suite for users and locations." />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1e3a8a" />
+  <link rel="apple-touch-icon" href="logo.png" />
+  <title>Webcam</title>
+
+  <!-- Leaflet CSS for Maps (Free alternative to Google Maps that works on local files) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <script>
+    window.addEventListener('error', function(e) {
+      console.error("JS Error: " + e.message + " at " + e.filename + ":" + e.lineno);
+    });
+  </script>
+
+  <!-- CSS Base & Layout -->
+  <link rel="stylesheet" href="css/main.css?v=2" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/components.css" />
+
+  <!-- Favicon inline SVG -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%233b82f6'/><text y='24' x='6' font-size='22' font-family='sans-serif' fill='white'>B</text></svg>" />
+
+  <style>
+    /* Printing/Crystal Reports print stylesheet integration */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      #sidebar, #app-header, .btn, .card-toolbar, .table-footer, .modal-overlay, #toast-container {
+        display: none !important;
+      }
+      #main-panel {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      #main-content {
+        padding: 0 !important;
+        overflow: visible !important;
+        background: #fff !important;
+      }
+      .card {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+    }
+    /* Hide Netlify badge - aggressive permanent removal */
+    #netlify-badge,
+    .netlify-badge,
+    a[href^="https://www.netlify.com"],
+    a[href*="netlify.com"],
+    div[data-netlify-badge],
+    [class*="netlify"],
+    [id*="netlify"] {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      position: fixed !important;
+      z-index: -9999 !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Auth View (Login / Forgot Password) ──────────────── -->
+  <div id="auth-view" style="display:none"></div>
+
+  <!-- ── App Shell ─────────────────────────────────────────── -->
+  <div id="app-shell" style="display:none">
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon" style="background: transparent;">
+          <img src="logo.png" alt="Logo" style="width: 32px; height: 32px; object-fit: contain; border-radius: 6px;" />
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">Webcam</div>
+          <div class="brand-sub" style="display:none;"></div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Main</div>
+
+        <!-- Dashboard -->
+        <div class="nav-item" data-route="dashboard" onclick="Router.navigate('dashboard')">
+          <span class="material-icons">dashboard</span>
+          <span class="nav-label">Dashboard</span>
+        </div>
+
+        <!-- Master -->
+        <div class="nav-item" data-route="master" onclick="App.toggleMasterMenu()">
+          <span class="material-icons">layers</span>
+          <span class="nav-label">Master</span>
+          <span class="material-icons nav-arrow" id="master-toggle-icon">expand_more</span>
+        </div>
+        <div id="master-submenu">
+          <div class="nav-sub-item" data-route="master/users" onclick="Router.navigate('master/users')">
+            <span class="material-icons">badge</span>
+            <span class="nav-sub-label">Employee Details</span>
+          </div>
+          <div class="nav-sub-item" id="nav-transaction-location" data-route="field-visit/locations" onclick="Router.navigate('field-visit/locations')">
+            <span class="material-icons">location_on</span>
+            <span class="nav-sub-label">Location Master</span>
+          </div>
+        </div>
+
+        <!-- Transaction Menu (was Field Visit) -->
+        <div class="nav-item" data-route="field-visit" onclick="App.toggleFieldVisitMenu()">
+          <span class="material-icons">swap_horiz</span>
+          <span class="nav-label">Transaction</span>
+          <span class="material-icons nav-arrow" id="field-visit-toggle-icon">expand_more</span>
+        </div>
+        <div id="field-visit-submenu" style="overflow:hidden; max-height:0; transition: max-height 0.35s ease;">
+          <div class="nav-sub-item" data-route="field-visit/checkin" onclick="Router.navigate('field-visit/checkin')">
+            <span class="material-icons">front_hand</span>
+            <span class="nav-sub-label">Selfie Cam</span>
+          </div>
+        </div>
+
+        <div class="nav-section-title">Other</div>
+
+        <!-- Reports (New Crystal Report menu) -->
+        <div class="nav-item" data-route="reports" onclick="App.toggleReportsMenu()">
+          <span class="material-icons">bar_chart</span>
+          <span class="nav-label">Reports</span>
+          <span class="material-icons nav-arrow" id="reports-toggle-icon">expand_more</span>
+        </div>
+        <div id="reports-submenu" style="overflow:hidden; max-height:0; transition: max-height 0.35s ease;">
+          <div class="nav-sub-item" data-route="reports/attendance" onclick="Router.navigate('reports/attendance')">
+            <span class="material-icons">description</span>
+            <span class="nav-sub-label">Report</span>
+          </div>
+        </div>
+
+        <!-- Settings (placeholder) -->
+        <div class="nav-item" onclick="App.notify('Settings module coming soon.','info')">
+          <span class="material-icons">settings</span>
+          <span class="nav-label">Settings</span>
+        </div>
+      </nav>
+
+      <!-- Sidebar Footer: Logout -->
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="Auth.logout()">
+          <span class="material-icons">logout</span>
+          <span class="nav-label">Logout</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Panel -->
+    <div id="main-panel">
+
+      <!-- Header -->
+      <header id="app-header">
+        <button class="header-toggle-btn" onclick="App.toggleSidebar()" title="Toggle Sidebar">
+          <span class="material-icons">menu</span>
+        </button>
+
+        <div class="header-breadcrumb" id="header-breadcrumb">
+          <span class="material-icons">home</span>
+          <span>Dashboard</span>
+        </div>
+
+        <div class="header-user" style="cursor: pointer;" onclick="App.viewCurrentUser()" title="View Profile">
+          <div class="header-user-info" style="text-align:right">
+            <div class="header-user-name" id="header-username">—</div>
+            <div class="header-user-role" id="header-role">—</div>
+          </div>
+          <div class="header-avatar" id="header-avatar">
+            <span id="header-avatar-text">A</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main id="main-content"></main>
+    </div>
+  </div>
+
+  <!-- ── Toast Container ────────────────────────────────────── -->
+  <div id="toast-container"></div>
+
+  <!-- Leaflet JS for Maps (CDN) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- ── JavaScript — order matters ─────────────────────────── -->
+  <script src="js/db.js?v=7"></script>
+  <script src="js/checkins-db.js?v=4"></script>
+  <!-- Face API for AI Verification -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+  <!-- Main Modules -->
+  <script src="js/auth.js?v=5"></script>
+  <script src="js/router.js?v=4"></script>
+  <script src="js/dashboard.js?v=4"></script>
+  <script src="js/users.js?v=8"></script>
+  <script src="js/locations.js?v=6"></script>
+  <script src="js/checkin.js?v=8"></script>
+  <script src="js/report.js?v=4"></script>
+  <script src="js/app.js?v=5"></script>
+
+  <!-- Permanently remove Netlify badge from DOM -->
+  <script>
+    (function() {
+      function removeNetlifyBadge() {
+        const selectors = [
+          '#netlify-badge',
+          '.netlify-badge',
+          '[class*="netlify"]',
+          '[id*="netlify"]',
+          'a[href*="netlify.com"]',
+        ];
+        selectors.forEach(sel => {
+          document.querySelectorAll(sel).forEach(el => el.remove());
+        });
+      }
+      // Run immediately and on every DOM change
+      removeNetlifyBadge();
+      const observer = new MutationObserver(removeNetlifyBadge);
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+      window.addEventListener('load', removeNetlifyBadge);
+    })();
+  </script>
+
+  <!-- Initialize App & Router -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // Unregister any existing service workers to absolutely kill the cache
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      App.init();
+      Router.init();
+    });
+  </script>
+
+  <!-- Breadcrumb updater -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const breadcrumbMap = {
+        'dashboard':          ['Home', 'Dashboard'],
+        'master/users':       ['Home', 'Master', 'Employee Details'],
+        'field-visit/checkin':['Home', 'Transaction', 'Selfie Cam'],
+        'field-visit/locations':['Home', 'Transaction', 'Location'],
+        'reports/attendance': ['Home', 'Reports', 'Report']
+      };
+
+      const bcActions = {
+        'Home': "window.location.hash='dashboard'",
+        'Master': "document.getElementById('sidebar').classList.add('mobile-open'); App.toggleMasterMenu()",
+        'Transaction': "document.getElementById('sidebar').classList.add('mobile-open'); App.toggleFieldVisitMenu()",
+        'Reports': "document.getElementById('sidebar').classList.add('mobile-open'); App.toggleReportsMenu()"
+      };
+
+      const updateBreadcrumb = () => {
+        const route = window.location.hash.replace('#', '') || 'dashboard';
+        const parts = breadcrumbMap[route];
+        const bc = document.getElementById('header-breadcrumb');
+        if (bc && parts) {
+          bc.innerHTML = parts.map((p, i) => {
+            const action = bcActions[p] ? `onclick="${bcActions[p]}" style="cursor:pointer;" class="bc-link"` : '';
+            if (i < parts.length - 1) {
+              return `<span ${action}>${p}</span><span class="material-icons" style="font-size:14px;color:var(--text-muted)">chevron_right</span>`;
+            } else {
+              return `<strong>${p}</strong>`;
+            }
+          }).join('');
+        }
+      };
+
+      window.addEventListener('hashchange', updateBreadcrumb);
+      updateBreadcrumb();
+
+      // Also sync sub-nav active state
+      window.addEventListener('hashchange', () => {
+        const route = window.location.hash.replace('#', '');
+        document.querySelectorAll('.nav-sub-item').forEach(el => {
+          el.classList.toggle('active', el.dataset.route === route);
+        });
+
+        // Auto open menus on direct entry
+        const base = route.split('/')[0];
+        if (base === 'master') {
+          const sub = document.getElementById('master-submenu');
+          if (sub) sub.classList.add('open');
+        } else if (base === 'field-visit') {
+          const sub = document.getElementById('field-visit-submenu');
+          if (sub) {
+            sub.style.maxHeight = '200px';
+            const toggle = document.getElementById('field-visit-toggle-icon');
+            if (toggle) toggle.textContent = 'expand_less';
+          }
+        } else if (base === 'reports') {
+          const sub = document.getElementById('reports-submenu');
+          if (sub) {
+            sub.style.maxHeight = '200px';
+            const toggle = document.getElementById('reports-toggle-icon');
+            if (toggle) toggle.textContent = 'expand_less';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
