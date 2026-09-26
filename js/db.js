@@ -480,7 +480,7 @@ window.DB = (() => {
 
     // Always ensure the correct admin and default employee exist with correct passwords
     const adminHash = await Auth.hashPassword('Admin@123');
-    const empHash   = await Auth.hashPassword('Emp@123');
+    const empHash   = await Auth.hashPassword('recreate');
 
     const existingUsers = read(KEYS.users);
 
